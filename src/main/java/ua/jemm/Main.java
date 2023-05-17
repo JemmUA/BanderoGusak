@@ -97,9 +97,6 @@ public class Main extends TelegramLongPollingBot {
                 sendApiMethodAsync(message);
             }
 
-        }
-
-        if (update.hasCallbackQuery()) {
             if (update.getCallbackQuery().getData().equals("level-2_task") && getLevel(chatId) == 2) {
                 // set level-3
                 setLevel(chatId, 3);
