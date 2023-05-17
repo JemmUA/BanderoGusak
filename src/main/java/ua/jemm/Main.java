@@ -10,7 +10,10 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 public class Main extends TelegramLongPollingBot {
@@ -39,39 +42,25 @@ public class Main extends TelegramLongPollingBot {
             SendMessage message = createMessage("Привіт!");
             message.setChatId(chatId);
 
-/*
             attachButtons(message, Map.of(
-                    "Слава Україні!", "glory_for_ukraine",
-                    "Слава Нації!", "glory_to_nation"
+                    "Слава Україні!", "glory_for_ukraine"
             ));
             sendApiMethodAsync(message);
-*/
-
-            List<Map.Entry<String, String>> buttonsEntriesList = new ArrayList<>();
-            buttonsEntriesList.add(new AbstractMap.SimpleEntry<>("Слава Україні!", "glory_for_ukraine"));
-            buttonsEntriesList.add(new AbstractMap.SimpleEntry<>("Слава Нації!", "glory_to_nation"));
-            buttonsEntriesList.add(new AbstractMap.SimpleEntry<>("Україна!", "ukraine"));
-            attachButtons(message, buttonsEntriesList);
-            sendApiMethodAsync(message);
-
-
         }
 
         if (update.hasCallbackQuery()) {
             if (update.getCallbackQuery().getData().equals("glory_for_ukraine")) {
                 SendMessage message = createMessage("Героям Слава!");
                 message.setChatId(chatId);
+                attachButtons(message, Map.of(
+                        "Слава Нації!", "glory_for_nation"
+                ));
+
                 sendApiMethodAsync(message);
             }
 
-            if (update.getCallbackQuery().getData().equals("glory_to_nation")) {
+            if (update.getCallbackQuery().getData().equals("glory_for_nation")) {
                 SendMessage message = createMessage("Смерть ворогам!");
-                message.setChatId(chatId);
-                sendApiMethodAsync(message);
-            }
-
-            if (update.getCallbackQuery().getData().equals("ukraine")) {
-                SendMessage message = createMessage("Понад усе!");
                 message.setChatId(chatId);
                 sendApiMethodAsync(message);
             }
@@ -97,19 +86,7 @@ public class Main extends TelegramLongPollingBot {
         return message;
     }
 
-    public void attachButtons(SendMessage message, List<Map.Entry<String, String>> buttons) {
-        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
-        for (Map.Entry<String, String> buttonName : buttons) {
-            String buttonValue = buttonName.getValue();
-            InlineKeyboardButton button = new InlineKeyboardButton();
-            button.setText(new String(buttonName.getKey().getBytes(), StandardCharsets.UTF_8));
-            button.setCallbackData(buttonValue);
-            keyboard.add(Arrays.asList(button));
-        }
 
-
-/*
     public void attachButtons(SendMessage message, Map<String, String> buttons) {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
@@ -120,7 +97,6 @@ public class Main extends TelegramLongPollingBot {
             button.setCallbackData(buttonValue);
             keyboard.add(Arrays.asList(button));
         }
-*/
         markup.setKeyboard(keyboard);
         message.setReplyMarkup(markup);
     }
