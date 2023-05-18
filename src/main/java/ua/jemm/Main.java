@@ -55,7 +55,8 @@ public class Main extends TelegramLongPollingBot {
             sendImage("level-1", chatId);
 
             // send message
-            SendMessage message = createMessage("Ґа-ґа-ґа!\n" +
+            SendMessage message = createMessage(
+                    "Ґа-ґа-ґа!\n" +
                     "Вітаємо у боті біолабораторії «Батько наш Бандера».\n" +
                     "\n" +
                     "Ти отримуєш гусака №" + banderoGusakNumber + "\n" +
@@ -99,7 +100,7 @@ public class Main extends TelegramLongPollingBot {
                 sendImage("level-2", chatId);
 
                 // send message
-                SendMessage message = createMessage("" +
+                SendMessage message = createMessage(
                         "*Вітаємо на другому рівні! Твій гусак - біогусак.*\n" +
                         "Баланс: 20 монет. \n" +
                         "Обери завдання, щоб перейти на наступний рівень\n");
@@ -129,7 +130,7 @@ public class Main extends TelegramLongPollingBot {
                 sendImage("level-3", chatId);
 
                 // send message
-                SendMessage message = createMessage("" +
+                SendMessage message = createMessage(
                         "*Вітаємо на третьому рівні! Твій гусак - бандеростажер.*\n" +
                         "Баланс: 35 монет. \n" +
                         "Обери завдання, щоб перейти на наступний рівень\n");
@@ -161,7 +162,7 @@ public class Main extends TelegramLongPollingBot {
                 sendImage("level-4", chatId);
 
                 // send message
-                SendMessage message = createMessage("" +
+                SendMessage message = createMessage(
                         "*Вітаємо на останньому рівні! Твій гусак - готова біологічна зброя - бандерогусак.*\n" +
                         "Баланс: 50 монет. \n" +
                         "Тепер ти можеш придбати Джавелін і глушити чмонь\n");
@@ -189,7 +190,10 @@ public class Main extends TelegramLongPollingBot {
                 // send message
                 SendMessage message = createMessage("*Джавелін твій. Повний вперед!*");
                 message.setChatId(chatId);
-                attachButtons(message, Map.of("Оце таааак!!! Хочу ще одного Бандерогусака!", currentLevelButton, "I'll be back!", "exit"));
+                attachButtons(message, Map.of(
+                        "Оце таааак!!! Хочу ще одного Бандерогусака!", currentLevelButton,
+                        "I'll be back!", "exit"
+                ));
                 sendApiMethodAsync(message);
 
                 banderoGusakNumber++;
