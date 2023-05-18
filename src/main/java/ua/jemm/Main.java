@@ -14,10 +14,13 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Main extends TelegramLongPollingBot {
     private Map<Long, Integer> levels = new HashMap<>();
+    private int banderoGusakNumber = 71;
+
 
     public static void main(String[] args) throws TelegramApiException {
 
@@ -40,8 +43,14 @@ public class Main extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         Long chatId = getChatId(update);
+        String currentLevelButton;
 
-        if (update.hasMessage() && update.getMessage().getText().equals("/start")) {
+
+        if ((update.hasMessage() && update.getMessage().getText().equals("/start")) ||
+                (update.hasCallbackQuery() && (update.getCallbackQuery().getData().equals("final") && getLevel(chatId) == 5))) {
+            currentLevelButton = "level-1_task";
+            // set level-1
+            setLevel(chatId, 1);
             // send image level-1
             sendImage("level-1", chatId);
 
@@ -49,7 +58,7 @@ public class Main extends TelegramLongPollingBot {
             SendMessage message = createMessage("Ґа-ґа-ґа!\n" +
                     "Вітаємо у боті біолабораторії «Батько наш Бандера».\n" +
                     "\n" +
-                    "Ти отримуєш гусака №71\n" +
+                    "Ти отримуєш гусака №" + banderoGusakNumber + "\n" +
                     "\n" +
                     "Цей бот ми створили для того, щоб твій гусак прокачався з рівня звичайної свійської худоби до рівня біологічної зброї, здатної нищити ворога. \n" +
                     "\n" +
@@ -62,61 +71,138 @@ public class Main extends TelegramLongPollingBot {
                     "Бонус: 5 монет.\n" +
                     "Обери завдання, щоб перейти на наступний рівень\n");
             message.setChatId(chatId);
-            attachButtons(message, Map.of(
-                    "Сплести маскувальну сітку (+15 монет)", "level-1_task",
-                    "Зібрати кошти патріотичними піснями (+15 монет)", "level-1_task",
-                    "Вступити в Міністерство Мемів України (+15 монет)", "level-1_task",
-                    "Запустити волонтерську акцію (+15 монет)", "level-1_task",
-                    "Вступити до лав тероборони (+15 монет)", "level-1_task"
-            ));
+
+            List<String> buttons = Arrays.asList(
+                    "Сплести маскувальну сітку (+15 монет)",
+                    "Зібрати кошти патріотичними піснями (+15 монет)",
+                    "Вступити в Міністерство Мемів України (+15 монет)",
+                    "Запустити волонтерську акцію (+15 монет)",
+                    "Вступити до лав тероборони (+15 монет))");
+            buttons = getRandom(buttons, 3);
+            Map<String, String> buttonsComplete = new HashMap<>();
+            for (String buttonName : buttons) {
+                buttonsComplete.put(buttonName, currentLevelButton);
+            }
+
+            attachButtons(message, buttonsComplete);
             sendApiMethodAsync(message);
 
         }
 
         if (update.hasCallbackQuery()) {
             if (update.getCallbackQuery().getData().equals("level-1_task") && getLevel(chatId) == 1) {
+                currentLevelButton = "level-2_task";
+
                 // set level-2
                 setLevel(chatId, 2);
                 // send image level-2
                 sendImage("level-2", chatId);
 
                 // send message
-                SendMessage message = createMessage("*Вітаємо на другому рівні! Твій гусак - біогусак.*\n" +
+                SendMessage message = createMessage("" +
+                        "*Вітаємо на другому рівні! Твій гусак - біогусак.*\n" +
                         "Баланс: 20 монет. \n" +
                         "Обери завдання, щоб перейти на наступний рівень\n");
                 message.setChatId(chatId);
-                attachButtons(message, Map.of(
-                        "Зібрати комарів для нової біологічної зброї (+15 монет)", "level-2_task",
-                        "Пройти курс молодого бійця (+15 монет)", "level-2_task",
-                        "Задонатити на ЗСУ (+15 монет)", "level-2_task",
-                        "Збити дрона банкою огірків (+15 монет)", "level-2_task",
-                        "Зробити запаси коктейлів Молотова (+15 монет)", "level-2_task"
 
-                ));
-
+                List<String> buttons = Arrays.asList(
+                        "Зібрати комарів для нової біологічної зброї (+15 монет)",
+                        "Пройти курс молодого бійця (+15 монет)",
+                        "Задонатити на ЗСУ (+15 монет)",
+                        "Збити дрона банкою огірків (+15 монет)",
+                        "Зробити запаси коктейлів Молотова (+15 монет)"
+                );
+                buttons = getRandom(buttons, 3);
+                Map<String, String> buttonsComplete = new HashMap<>();
+                for (String buttonName : buttons) {
+                    buttonsComplete.put(buttonName, currentLevelButton);
+                }
+                attachButtons(message, buttonsComplete);
                 sendApiMethodAsync(message);
             }
 
             if (update.getCallbackQuery().getData().equals("level-2_task") && getLevel(chatId) == 2) {
+                currentLevelButton = "level-3_task";
                 // set level-3
                 setLevel(chatId, 3);
                 // send image level-3
                 sendImage("level-3", chatId);
 
                 // send message
-                SendMessage message = createMessage("*Вітаємо на третьому рівні! Твій гусак - бандеростажер.*\n" +
+                SendMessage message = createMessage("" +
+                        "*Вітаємо на третьому рівні! Твій гусак - бандеростажер.*\n" +
                         "Баланс: 35 монет. \n" +
                         "Обери завдання, щоб перейти на наступний рівень\n");
                 message.setChatId(chatId);
-                attachButtons(message, Map.of(
-                        "Злітати на тестовий рейд по чотирьох позиціях (+15 монет)", "level-3_task",
-                        "Відвезти гуманітарку на передок (+15 монет)", "level-3_task",
-                        "Знайти зрадника та здати в СБУ (+15 монет)", "level-3_task",
-                        "Навести арту на орків (+15 монет)", "level-3_task",
-                        "Притягнути танк трактором (+15 монет)", "level-3_task"
-                ));
+
+                List<String> buttons = Arrays.asList(
+                        "Злітати на тестовий рейд по чотирьох позиціях (+15 монет)",
+                        "Відвезти гуманітарку на передок (+15 монет)",
+                        "Знайти зрадника та здати в СБУ (+15 монет)",
+                        "Навести арту на орків (+15 монет)",
+                        "Притягнути танк трактором (+15 монет)"
+                );
+                buttons = getRandom(buttons, 3);
+                Map<String, String> buttonsComplete = new HashMap<>();
+                for (String buttonName : buttons) {
+                    buttonsComplete.put(buttonName, currentLevelButton);
+                }
+
+                attachButtons(message, buttonsComplete);
                 sendApiMethodAsync(message);
             }
+
+            if (update.getCallbackQuery().getData().equals("level-3_task") && getLevel(chatId) == 3) {
+                currentLevelButton = "level-4_task";
+
+                // set level-4
+                setLevel(chatId, 4);
+                // send image level-4
+                sendImage("level-4", chatId);
+
+                // send message
+                SendMessage message = createMessage("" +
+                        "*Вітаємо на останньому рівні! Твій гусак - готова біологічна зброя - бандерогусак.*\n" +
+                        "Баланс: 50 монет. \n" +
+                        "Тепер ти можеш придбати Джавелін і глушити чмонь\n");
+                message.setChatId(chatId);
+
+                List<String> buttons = Arrays.asList(
+                        "Купити Джавелін (50 монет)"
+                );
+                Map<String, String> buttonsComplete = new HashMap<>();
+                for (String buttonName : buttons) {
+                    buttonsComplete.put(buttonName, currentLevelButton);
+                }
+                attachButtons(message, buttonsComplete);
+                sendApiMethodAsync(message);
+            }
+
+            if (update.getCallbackQuery().getData().equals("level-4_task") && getLevel(chatId) == 4) {
+                currentLevelButton = "final";
+
+                // set level-5
+                setLevel(chatId, 5);
+                // send image level-5
+                sendImage("final", chatId);
+
+                // send message
+                SendMessage message = createMessage("*Джавелін твій. Повний вперед!*");
+                message.setChatId(chatId);
+                attachButtons(message, Map.of("Оце таааак!!! Хочу ще одного Бандерогусака!", currentLevelButton, "I'll be back!", "exit"));
+                sendApiMethodAsync(message);
+
+                banderoGusakNumber++;
+            }
+
+            if (update.hasCallbackQuery() && update.getCallbackQuery().getData().equals("exit")) {
+                SendMessage message = createMessage("*Я полетів! До зустрічі, друже!!! Ґа-ґа-ґа!*");
+                message.setChatId(chatId);
+                sendApiMethodAsync(message);
+                System.exit(1);
+            }
+
+
         }
     }
 
@@ -170,5 +256,12 @@ public class Main extends TelegramLongPollingBot {
 
     public void setLevel(Long chatId, int level) {
         levels.put(chatId, level);
+    }
+
+    public List<String> getRandom(List<String> variants, int numberOfVariants) {
+        Collections.shuffle(variants);
+        return variants.stream()
+                .limit(numberOfVariants)
+                .collect(Collectors.toList());
     }
 }
